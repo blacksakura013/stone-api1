@@ -19,7 +19,7 @@ const PORT = 3000;
 app.listen(PORT, () => {
   const baseUrl =
     process.env.NODE_ENV === "production"
-      ? "https://stone-api.onrender.com"
+      ? "https://stone-api1.onrender.com"
       : `http://localhost:${PORT}`;
 
   console.log(`🚀 Server running at ${baseUrl}`);

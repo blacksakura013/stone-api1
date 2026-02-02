@@ -1,14 +1,17 @@
 {
   "name": "stone-api",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Stone & SSKU API with JSON DB and Swagger",
   "main": "app.js",
   "scripts": {
-    "start": "node app.js"
+    "start": "node app.js",
+    "dev": "node app.js"
+  },
+  "engines": {
+    "node": ">=18"
   },
   "dependencies": {
     "express": "^4.19.2",
-    "swagger-ui-express": "^5.0.1",
-    "uuid": "^9.0.1"
+    "swagger-ui-express": "^5.0.1"
   }
 }
