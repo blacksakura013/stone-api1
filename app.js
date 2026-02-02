@@ -17,10 +17,9 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 const PORT = 3000;
 app.listen(PORT, () => {
-  const baseUrl =
-    process.env.NODE_ENV === "production"
-      ? "https://stone-api1.onrender.com"
-      : `http://localhost:${PORT}`;
+ 
+     const baseUrl ="https://stone-api1.onrender.com"
+  //   const baseUrl =`http://localhost:${PORT}` 
 
   console.log(`🚀 Server running at ${baseUrl}`);
   console.log(`📘 Swagger at ${baseUrl}/api-docs`);
