@@ -5,7 +5,6 @@ const router = express.Router();
 
 router.get("/stone", (req, res) => {
   const { search } = req.query;
-
   const keyword = search ? String(search).toLowerCase() : null;
 
   const limit = Math.max(1, Number(req.query.limit) || 20);
@@ -14,44 +13,52 @@ router.get("/stone", (req, res) => {
   const stones = readJson("stones.json");
   const sskus = readJson("sskus.json");
 
-  const results = [];
-  const usedSSKU = new Set();
+  const merged = [];
+  const stoneHasSSKU = new Set();
 
-  // 🔍 search by SSKU id OR return all
+  /* =====================
+     1️⃣ MERGE : SSKU + Stone
+  ===================== */
   sskus.forEach(ssku => {
-    if (!keyword || (ssku.id && ssku.id.toLowerCase().includes(keyword))) {
-      if (!usedSSKU.has(ssku.id)) {
-        const stone = stones.find(st => st.id === ssku.stoneid);
-        if (stone) {
-          usedSSKU.add(ssku.id);
-          results.push(buildResult(stone, ssku));
-        }
-      }
-    }
+    const stone = stones.find(st => st.id === ssku.stoneid);
+    if (!stone) return;
+
+    stoneHasSSKU.add(stone.id);
+    merged.push(buildResult(stone, ssku));
   });
 
-  // 🔍 search by stone name (for stone without ssku or extra match)
+  /* =====================
+     2️⃣ MERGE : Stone without SSKU
+  ===================== */
   stones.forEach(stone => {
-    if (!keyword || (stone.name && stone.name.toLowerCase().includes(keyword))) {
-      const relatedSSKUs = sskus.filter(s => s.stoneid === stone.id);
-
-      if (relatedSSKUs.length === 0 && !usedSSKU.has(`stone-${stone.id}`)) {
-        usedSSKU.add(`stone-${stone.id}`);
-        results.push(buildResult(stone, null));
-      }
-    }
+    if (stoneHasSSKU.has(stone.id)) return;
+    merged.push(buildResult(stone, null));
   });
 
-  const paged = results.slice(offset, offset + limit);
+  /* =====================
+     3️⃣ SEARCH (%LIKE%)
+  ===================== */
+  let filtered = merged;
+
+  if (keyword) {
+    filtered = merged.filter(item =>
+      item.stone?.toLowerCase().includes(keyword) ||
+      item.ssku?.toLowerCase().includes(keyword)
+    );
+  }
+
+  /* =====================
+     4️⃣ PAGINATION
+  ===================== */
+  const paged = filtered.slice(offset, offset + limit);
 
   res.json({
-    total: results.length,
+    total: filtered.length,
     limit,
     offset,
     data: paged
   });
 });
-
 
 /* =====================
    helper
