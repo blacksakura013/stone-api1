@@ -8,8 +8,8 @@ module.exports = {
   },
   servers: [
     {
-      url: "http://localhost:3000",
-      description: "Local server"
+      url: "https://stone-api1.onrender.com/",
+      description: "onrender server"
     }
   ],
   tags: [
